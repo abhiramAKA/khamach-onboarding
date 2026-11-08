@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ИНТЕРФЕЙС И ТРЕНИРОВКА СПОРТЗАЛА ОБУЧЕНИЯ (ИСПРАВЛЕН - v1.0.1)
+   КХАМАЧ — ИНТЕРФЕЙС И ТРЕНИРОВКА СПОРТЗАЛА ОБУЧЕНИЯ (БЕЗ АЛЕРТОВ)
    ========================================================================== */
 
 const ONBOARDING_HERO_LORE = {
@@ -11,13 +11,9 @@ const ONBOARDING_HERO_LORE = {
 
 function updateSquadHeroesSpecScreenDOM() {
     const container = document.getElementById('heroes-upgrade-list-container');
-    if (!container) return; 
-    container.innerHTML = '';
+    if (!container) return; container.innerHTML = '';
     
-    container.style.display = "grid"; 
-    container.style.gridTemplateColumns = "1fr 1fr"; 
-    container.style.gap = "6px";
-    container.style.width = "100%";
+    container.style.display = "grid"; container.style.gridTemplateColumns = "1fr 1fr"; container.style.gap = "6px";
     
     const heroesData = [{ id: "tank" }, { id: "damage" }, { id: "archer" }, { id: "mage" }];
     
@@ -51,20 +47,35 @@ function updateSquadHeroesSpecScreenDOM() {
 function executeOnboardingCampUpgrade() {
     localStorage.setItem('khamach_training_tutorial_done', 'true');
     localStorage.setItem('khamach_dragon_essence', '0');
-    alert("Тренировка успешна! Защитник развился до 2 уровня. Получено стартовое золото казны!");
-    window.location.href = 'gate.html?t=' + Date.now();
+    
+    // БЕЗ АЛЕРТОВ: Закрываем окно Спортзала и бесшовно возвращаем на обновленный gate.html
+    document.getElementById('squad-heroes-spec-screen').style.display = 'none';
+    if (typeof window.reloadOnboardingCoreState === 'function') {
+        window.reloadOnboardingCoreState();
+    } else {
+        window.location.href = 'gate.html?t=' + Date.now();
+    }
 }
 
 function injectSquadInterfaceDOM() {
     const screen = document.getElementById('squad-screen'); 
     if(!screen) return;
     
+    // ВОЗВРАЩАЕМ ВСЕ 4 ЗДАНЬЯ: С фиксом клика по активному Гарнизону
     screen.innerHTML = `
         <h2>Цитадель</h2>
-        <span class="subtitle">Строительство Построек</span>
-        <div class="menu-row" style="width: 100%;">
-            <!-- ЖЕСТКАЯ ФИКСАЦИЯ ID КНОПКИ СТРОИТЕЛЬСТВА -->
-            <button id="upgrade-tank-btn" class="menu-btn" style="background:linear-gradient(to bottom, #3a2a18, #1c130a); border-color:#8a7350; width: 100%;">⚒️ Построить Гарнизон Защитника (Цена: 🪙 100)</button>
+        <span class="subtitle">Инфраструктура строений</span>
+        <div style="display: flex; flex-direction: column; width: 100%; box-sizing: border-box; gap: 4px;">
+            <div class="menu-row"><button id="upgrade-tank-btn" class="menu-btn" style="background:linear-gradient(to bottom, #3a2a18, #1c130a); border-color:#8a7350;">⚒️ Построить Гарнизон Защитника (Цена: 🪙 100)</button></div>
+            <div class="menu-row"><button class="menu-btn disabled" style="background:#0f0d0b; border-color:#26211c; color:#4a453f;" disabled>⚒️ Построить Казармы Воинов (Ур. 1)</button></div>
+            <div class="menu-row"><button class="menu-btn disabled" style="background:#0f0d0b; border-color:#26211c; color:#4a453f;" disabled>⚒️ Построить Стрельбище Лучникова (Ур. 1)</button></div>
+            <div class="menu-row"><button class="menu-btn disabled" style="background:#0f0d0b; border-color:#26211c; color:#4a453f;" disabled>⚒️ Построить Обитель Магов (Ур. 1)</button></div>
         </div>
     `;
+    
+    // Вешаем прослушиватель событий намертво
+    const btn = document.getElementById('upgrade-tank-btn');
+    if (btn && typeof window.executeOnboardingCitadelBuild === 'function') {
+        btn.onclick = window.executeOnboardingCitadelBuild;
+    }
 }
