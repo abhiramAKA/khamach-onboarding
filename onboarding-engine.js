@@ -1,6 +1,25 @@
 /* ==========================================================================
-   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ И ШЛЮЗ РЕДИРЕКТА (ИСПРАВЛЕН - v5.9.1)
+   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ (БЕСШОВНЫЕ ПЕРЕХОДЫ И СТРУКТУРА - v1.0.2)
    ========================================================================== */
+
+window.reloadOnboardingCoreState = function() {
+    // Вспомогательный метод для бесшовного обновления текстов главного окна
+    const gothicWin = document.getElementById('onboarding-gothic-window');
+    if (gothicWin) gothicWin.style.display = 'flex';
+    if (typeof window.checkAndRenderOnboardingMainButton === 'function') {
+        window.checkAndRenderOnboardingMainButton();
+    }
+};
+
+window.executeOnboardingCitadelBuild = function() {
+    // РЕАКТИВНАЯ ПОСТРОЙКА: Списываем деньги и мгновенно открываем Ратушу без перезагрузок!
+    localStorage.setItem('khamach_gold', '0'); 
+    localStorage.setItem('khamach_build_tank', '2'); 
+    localStorage.setItem('khamach_citadel_tutorial_done', 'true');
+    
+    document.getElementById('squad-screen').style.display = 'none';
+    window.launchOnboardingStep('missions'); // Мгновенно открываем окно Ратуши 💰!
+};
 
 window.launchOnboardingStep = function(modeType) {
     const gothicWin = document.getElementById('onboarding-gothic-window');
@@ -19,8 +38,6 @@ window.launchOnboardingStep = function(modeType) {
     } 
     else if (modeType === 'camp') {
         if (typeof injectTownScreensDOM === 'function') injectTownScreensDOM();
-        
-        // ФИКС ОТКРЫТИЯ СПОРТЗАЛА: Сначала инжектим базовый каркас окна, затем рендерим список
         const specScr = document.getElementById('squad-heroes-spec-screen');
         if (specScr) {
             if (typeof updateSquadHeroesSpecScreenDOM === 'function') updateSquadHeroesSpecScreenDOM();
@@ -31,17 +48,6 @@ window.launchOnboardingStep = function(modeType) {
         localStorage.setItem('khamach_gold', '100');
         if (typeof injectSquadInterfaceDOM === 'function') injectSquadInterfaceDOM();
         document.getElementById('squad-screen').style.display = 'flex';
-        document.getElementById('close-squad-btn').style.display = 'none';
-        
-        const tankBtn = document.getElementById('upgrade-tank-btn');
-        if (tankBtn) {
-            tankBtn.onclick = function() {
-                localStorage.setItem('khamach_gold', '0'); 
-                localStorage.setItem('khamach_build_tank', '2'); 
-                localStorage.setItem('khamach_citadel_tutorial_done', 'true');
-                window.location.href = 'gate.html?t=' + Date.now();
-            };
-        }
     } 
     else if (modeType === 'missions') {
         if (typeof injectTownScreensDOM === 'function') injectTownScreensDOM();
@@ -50,14 +56,14 @@ window.launchOnboardingStep = function(modeType) {
             container.innerHTML = '';
             window.ONBOARDING_MISSIONS_LOCAL_POOL.forEach(mission => {
                 const card = document.createElement('div');
-                card.style = "background: rgba(25, 20, 18, 0.9); border: 1px solid #544432; padding: 8px 10px; border-radius: 3px; display: flex; flex-direction: column; gap: 4px;";
+                card.style = "background: rgba(25, 20, 18, 0.9); border: 1px solid #544432; padding: 8px 10px; border-radius: 3px; display: flex; flex-direction: column; gap: 4px; width:100%; box-sizing:border-box;";
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #e6c280; font-size: 12px;">
                         <span>${mission.title}</span>
                         <span style="color: #ffd700;">🪙 133</span>
                     </div>
                     <div style="font-size: 11px; color: #bfae96; line-height: 1.3; text-align: left;">${mission.text}</div>
-                    <button class="menu-btn" style="padding:4px; font-size:13px; background:#1d3a1e; height:28px; margin-top: 4px;" onclick="window.triggerFinalOnboardingTransfer()">Отправить 🛡️</button>
+                    <button class="menu-btn" style="padding:4px; font-size:13px; background:#1d3a1e; height:28px; margin-top: 4px; font-weight:bold;" onclick="window.triggerFinalOnboardingTransfer()">Отправить 🛡️</button>
                 `;
                 container.appendChild(card);
             });
