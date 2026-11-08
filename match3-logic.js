@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (ИСПРАВЛЕН ФИКС МИГАНИЯ)
+   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (БЕЗОПАСНОЕ ПАДЕНИЕ)
    ========================================================================== */
 
 function checkMatchesAndExecute() {
@@ -38,6 +38,8 @@ function checkMatchesAndExecute() {
         }
         
         setTimeout(() => {
+            const RUNE_TYPES = ['🔥', '🛡️', '⚡', '💚'];
+            
             for (let c = 0; c < 8; c++) {
                 let emptyRow = 7;
                 for (let r = 7; r >= 0; r--) {
@@ -47,19 +49,24 @@ function checkMatchesAndExecute() {
                         emptyRow--;
                     }
                 }
+                // ФИКС ПАДЕНИЯ: Новые падающие руны тоже фильтруются от случайных комбо
                 for (let r = emptyRow; r >= 0; r--) {
-                    match3BoardData[r][c] = ['🔥', '🛡️', '⚡', '💚'][Math.floor(Math.random()*4)];
+                    let allowedTypes = RUNE_TYPES.filter(type => {
+                        if (r >= 2 && match3BoardData[r-1][c] === type && match3BoardData[r-2][c] === type) return false;
+                        if (c >= 2 && match3BoardData[r][c-1] === type && match3BoardData[r][c-2] === type) return false;
+                        return true;
+                    });
+                    match3BoardData[r][c] = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
                 }
             }
             if (typeof chargeHeroSuperpowers === 'function') chargeHeroSuperpowers(effects);
             
-            // ИСПРАВЛЕНО: Вместо грубой перезагрузки DOM обновляем только текстовые значения ячеек матрицы
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const cellEl = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
                     if (cellEl) {
                         cellEl.innerText = match3BoardData[r][c];
-                        cellEl.className = 'rune-cell'; // Сбрасываем старые анимационные взрывы
+                        cellEl.className = 'rune-cell';
                     }
                 }
             }
