@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (ЗАМОРОЗКА КОМБО И ПАДЕНИЕ)
+   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (ФИКС ОКОН И ПАДЕНИЯ)
    ========================================================================== */
 
 function checkMatchesAndExecute() {
@@ -7,7 +7,6 @@ function checkMatchesAndExecute() {
     let found = false;
     let detectedAdvancedCombo = false;
     
-    // 1. Поиск триад по горизонтали
     for (let r = 0; r < 8; r++) {
         let matchLength = 1;
         for (let c = 0; c < 8; c++) {
@@ -24,7 +23,6 @@ function checkMatchesAndExecute() {
         }
     }
     
-    // 2. Поиск триад по вертикали
     for (let c = 0; c < 8; c++) {
         let matchLength = 1;
         for (let r = 0; r < 8; r++) {
@@ -45,7 +43,25 @@ function checkMatchesAndExecute() {
         isBoardLocked = true;
         let effects = { '🔥': 0, '🛡️': 0, '⚡': 0, '💚': 0 };
         
-        // Сбор наград и запуск искр перед удалением
+        // ФИКС ОДНОКРАТНОСТИ: Показываем окно комбо строго 1 раз за всю историю обучения
+        const isComboTutorialDone = localStorage.getItem('khamach_combo_tut_done') === 'true';
+        if (detectedAdvancedCombo && !isComboTutorialDone) {
+            const comboScr = document.getElementById('combat-combo-tutorial-screen');
+            if (comboScr) {
+                comboScr.style.display = 'flex';
+                // Сразу взрываем текущие ячейки в памяти, чтобы они очистились
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        if (matched[r][c] && match3BoardData[r][c]) {
+                            effects[match3BoardData[r][c]]++;
+                            match3BoardData[r][c] = null;
+                        }
+                    }
+                }
+                return found; // Замораживаем выполнение кода, прерывая падение
+            }
+        }
+        
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
                 if (matched[r][c] && match3BoardData[r][c]) {
@@ -59,7 +75,6 @@ function checkMatchesAndExecute() {
             }
         }
 
-        // Выносим шаг гравитации и падения в изолированную функцию
         window.executePostComboGravity = function() {
             const RUNE_TYPES = ['🔥', '🛡️', '⚡', '💚'];
             let newRunesCoords = [];
@@ -91,7 +106,7 @@ function checkMatchesAndExecute() {
             
             if (typeof chargeHeroSuperpowers === 'function') chargeHeroSuperpowers(effects);
             
-            // РЕНДЕРИМ ПАДЕНИЕ: Перерисовываем ячейки с назначением анимационного класса .rune-fall
+            // ЧЕСТНАЯ ГРАВИТАЦИЯ: Перерисовываем доску с анимационным классом падения рун сверху
             const board = document.getElementById('match3-board-container');
             if (board) {
                 board.innerHTML = '';
@@ -102,7 +117,6 @@ function checkMatchesAndExecute() {
                         cell.dataset.row = r; cell.dataset.col = c;
                         cell.innerText = match3BoardData[r][c] || '';
                         
-                        // Если руна новорожденная — даем ей красивую гравитацию падения сверху
                         if (newRunesCoords.some(coord => coord.row === r && coord.col === c)) {
                             cell.classList.add('rune-fall');
                         }
@@ -114,7 +128,6 @@ function checkMatchesAndExecute() {
                 }
             }
             
-            // Рекурсивная проверка следующей цепочки комбо
             setTimeout(() => {
                 let chainMatched = checkMatchesAndExecute();
                 if (!chainMatched) {
@@ -124,16 +137,6 @@ function checkMatchesAndExecute() {
             }, 220);
         };
         
-        // ЖЕСТКАЯ ПАУЗА: Если выпало продвинутое комбо — замораживаем каскад и ждем клика по кнопке
-        if (detectedAdvancedCombo) {
-            const comboScr = document.getElementById('combat-combo-tutorial-screen');
-            if (comboScr) {
-                comboScr.style.display = 'flex';
-                return found; // Прерываем таймер фонового падения
-            }
-        }
-        
-        // Если обычная триада — пускаем гравитацию через стандартную задержку
         setTimeout(() => { window.executePostComboGravity(); }, 250);
     }
     return found;
