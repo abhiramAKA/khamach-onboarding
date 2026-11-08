@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — СЕТКА ИГРОВОГО ПОЛЯ MATCH-3 (УМНАЯ БЕЗОПАСНАЯ ГЕНЕРАЦИЯ)
+   КХАМАЧ — СЕТКА ИГРОВОГО ПОЛЯ MATCH-3 (НЕУЯЗВИМАЯ СБОРКА - v5.9.5)
    ========================================================================== */
 
 let match3BoardData = [];
@@ -19,14 +19,17 @@ function initMatch3Board() {
     for (let r = 0; r < 8; r++) {
         match3BoardData[r] = [];
         for (let c = 0; c < 8; c++) {
-            // ФИКС САМОВЗРЫВОВ: Фильтруем типы рун, исключая дубликаты по горизонтали и вертикали
             let allowedTypes = RUNE_TYPES.filter(type => {
                 if (r >= 2 && match3BoardData[r-1][c] === type && match3BoardData[r-2][c] === type) return false;
                 if (c >= 2 && match3BoardData[r][c-1] === type && match3BoardData[r][c-2] === type) return false;
                 return true;
             });
-            // Берем случайный только из разрешенных
-            let randomType = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
+            
+            // ЗАЩИТА ОТ ТУПИКА: Если фильтр пуст, берем любую базовую руну
+            let randomType = allowedTypes.length > 0 
+                ? allowedTypes[Math.floor(Math.random() * allowedTypes.length)] 
+                : RUNE_TYPES[Math.floor(Math.random() * RUNE_TYPES.length)];
+                
             match3BoardData[r][c] = randomType;
         }
     }
@@ -44,7 +47,7 @@ function renderBoardDOM() {
             cell.className = 'rune-cell rune-appear';
             cell.dataset.row = r; 
             cell.dataset.col = c;
-            cell.innerText = match3BoardData[r][c];
+            cell.innerText = match3BoardData[r][c] || '';
             cell.addEventListener('click', handleCellClick);
             if (typeof setupInputListeners === 'function') setupInputListeners(cell);
             board.appendChild(cell);
@@ -81,11 +84,10 @@ function animateAndSwapRunes(r1, c1, r2, c2) {
     
     let hasMatches = typeof checkMatchesAndExecute === 'function' ? checkMatchesAndExecute() : false;
     if (!hasMatches) {
-        // Если совпадений нет — возвращаем камни обратно сочным отскоком
         temp = match3BoardData[r1][c1]; 
         match3BoardData[r1][c1] = match3BoardData[r2][c2]; 
         match3BoardData[r2][c2] = temp;
-        setTimeout(() => { renderBoardDOM(); isBoardLocked = false; }, 200);
+        setTimeout(() => { renderBoardDOM(); isBoardLocked = false; }, 220);
     } else {
         isBoardLocked = false;
     }
