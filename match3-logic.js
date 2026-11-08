@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (v5.9.0-sandbox)
+   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (ИСПРАВЛЕН ФИКС МИГАНИЯ)
    ========================================================================== */
 
 function checkMatchesAndExecute() {
@@ -29,7 +29,9 @@ function checkMatchesAndExecute() {
             for (let c = 0; c < 8; c++) {
                 if (matched[r][c]) {
                     effects[match3BoardData[r][c]]++;
-                    spawnRuneExplosionSparks(r, c, match3BoardData[r][c]);
+                    if (typeof spawnRuneExplosionSparks === 'function') {
+                        spawnRuneExplosionSparks(r, c, match3BoardData[r][c]);
+                    }
                     match3BoardData[r][c] = null;
                 }
             }
@@ -50,7 +52,18 @@ function checkMatchesAndExecute() {
                 }
             }
             if (typeof chargeHeroSuperpowers === 'function') chargeHeroSuperpowers(effects);
-            renderBoardDOM();
+            
+            // ИСПРАВЛЕНО: Вместо грубой перезагрузки DOM обновляем только текстовые значения ячеек матрицы
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const cellEl = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                    if (cellEl) {
+                        cellEl.innerText = match3BoardData[r][c];
+                        cellEl.className = 'rune-cell'; // Сбрасываем старые анимационные взрывы
+                    }
+                }
+            }
+            
             isBoardLocked = false;
             if (typeof usePlayerActionPoint === 'function') usePlayerActionPoint();
         }, 250);
