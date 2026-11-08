@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — СЕТКА ИГРОВОГО ПОЛЯ MATCH-3 (НЕУЯЗВИМАЯ СБОРКА - v5.9.5)
+   КХАМАЧ — СЕТКА ИГРОВОГО ПОЛЯ MATCH-3 (ПЛАВНЫЙ СВОП И СВОП-БЭК)
    ========================================================================== */
 
 let match3BoardData = [];
@@ -25,7 +25,6 @@ function initMatch3Board() {
                 return true;
             });
             
-            // ЗАЩИТА ОТ ТУПИКА: Если фильтр пуст, берем любую базовую руну
             let randomType = allowedTypes.length > 0 
                 ? allowedTypes[Math.floor(Math.random() * allowedTypes.length)] 
                 : RUNE_TYPES[Math.floor(Math.random() * RUNE_TYPES.length)];
@@ -68,9 +67,12 @@ function handleCellClick(e) {
         const isNeighbor = Math.abs(r - selectedCell.row) + Math.abs(c - selectedCell.col) === 1;
         if (isNeighbor) {
             animateAndSwapRunes(selectedCell.row, selectedCell.col, r, c);
+        } else {
+            renderBoardDOM();
+            selectedCell = { row: r, col: c };
+            const currentCell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+            if (currentCell) currentCell.style.background = 'rgba(230,194,128,0.3)';
         }
-        selectedCell = null; 
-        renderBoardDOM();
     }
 }
 
@@ -78,17 +80,33 @@ function animateAndSwapRunes(r1, c1, r2, c2) {
     isBoardLocked = true; 
     if (typeof playMatch3Sound === 'function') playMatch3Sound('swap');
     
-    let temp = match3BoardData[r1][c1]; 
-    match3BoardData[r1][c1] = match3BoardData[r2][c2]; 
-    match3BoardData[r2][c2] = temp;
+    const cell1 = document.querySelector(`[data-row="${r1}"][data-col="${c1}"]`);
+    const cell2 = document.querySelector(`[data-row="${r2}"][data-col="${c2}"]`);
+    if (!cell1 || !cell2) { isBoardLocked = false; return; }
     
-    let hasMatches = typeof checkMatchesAndExecute === 'function' ? checkMatchesAndExecute() : false;
-    if (!hasMatches) {
-        temp = match3BoardData[r1][c1]; 
+    // ВЫЧИСЛЕНИЕ СКОЛЬЖЕНИЯ: Сдвигаем элементы плавно навстречу друг другу
+    const deltaX = cell2.offsetLeft - cell1.offsetLeft;
+    const deltaY = cell2.offsetTop - cell1.offsetTop;
+    cell1.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    cell2.style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
+    
+    setTimeout(() => {
+        let temp = match3BoardData[r1][c1]; 
         match3BoardData[r1][c1] = match3BoardData[r2][c2]; 
         match3BoardData[r2][c2] = temp;
-        setTimeout(() => { renderBoardDOM(); isBoardLocked = false; }, 220);
-    } else {
-        isBoardLocked = false;
-    }
+        
+        let hasMatches = typeof checkMatchesAndExecute === 'function' ? checkMatchesAndExecute() : false;
+        if (!hasMatches) {
+            // СВОП-БЭК: Если триада не собралась, плавно возвращаем руны назад
+            cell1.style.transform = 'translate(0, 0)';
+            cell2.style.transform = 'translate(0, 0)';
+            temp = match3BoardData[r1][c1]; 
+            match3BoardData[r1][c1] = match3BoardData[r2][c2]; 
+            match3BoardData[r2][c2] = temp;
+            setTimeout(() => { renderBoardDOM(); isBoardLocked = false; }, 220);
+        } else {
+            selectedCell = null;
+            isBoardLocked = false;
+        }
+    }, 220);
 }
