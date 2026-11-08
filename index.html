@@ -11,14 +11,27 @@
         .play-btn { width:100%; padding:16px; font-size:18px; font-family:'Georgia', serif; font-weight:bold; letter-spacing:2px; color:#cdb38c; background:linear-gradient(to bottom, #2d2621 0%, #171311 100%); border:1px solid #544432; box-shadow:0 5px 10px rgba(0,0,0,0.6); cursor:pointer; transition:all 0.2s ease; border-radius:4px; text-shadow:2px 2px 2px #000; }
         .play-btn:hover { color:#fff; border-color:#cbb281; box-shadow:0 0 15px rgba(203,178,129,0.5); letter-spacing:3px; }
         .play-btn:active { transform:scale(0.98); }
-        .ver { margin-top:15px; font-size:11px; color:#4a453f; letter-spacing:1px; font-weight:bold; }
+        .changelog { margin-top:18px; text-align:left; background:rgba(0,0,0,0.5); border:1px solid #3a3025; padding:10px; max-height:120px; overflow-y:auto; font-size:11px; color:#bfae96; line-height:1.45; border-radius:2px; }
+        .changelog h3 { margin:0 0 4px 0; color:#e6c280; font-size:12px; text-transform:uppercase; letter-spacing:1px; }
+        .ver { margin-top:15px; font-size:11px; color:#ffd700; letter-spacing:1px; font-weight:bold; text-shadow: 0 0 5px rgba(255,215,0,0.3); }
     </style>
 </head>
 <body>
     <div class="gate-window">
         <h1>КХАМАЧ</h1>
-        <button class="play-btn" onclick="window.location.href='gate.html?t=' + Date.now()">НАЧАТЬ ОБУЧЕНИЕ</button>
-        <div class="ver">ПЕСОЧНИЦА ОНБОРДИНГА</div>
+        <!-- КАСТАДНЫЙ СБРОС КЭША ДЛЯ НУЛЕВОЙ ВЕРСИИ -->
+        <button class="play-btn" onclick="window.location.href='gate.html?v=v1.0.0-ONBOARDING&t=' + Date.now()">НАЧАТЬ С НУЛЯ</button>
+        
+        <div class="changelog">
+            <h3>📜 СЛЕДЫ ИСТОРИИ (СБОРКА v1.0.0):</h3>
+            • Старт изолированной архитектуры песочницы онбординга.<br>
+            • Полное отделение логики туториала от основного игрового клиента.<br>
+            • Внедрена защита от кэширования и зависания старых сессий.<br>
+            • Стабилизирован каскадный алгоритм уничтожения рун без мигания поля.
+        </div>
+
+        <!-- ТОЧНЫЙ КОНТРОЛЬНЫЙ МАРКЕР СБОРКИ С НУЛЯ -->
+        <div class="ver">ТЕКУЩАЯ СБОРКА ОБУЧЕНИЯ: v1.0.0-ONBOARDING</div>
     </div>
 </body>
 </html>
