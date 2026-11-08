@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ЯДРО БОЯ ОБУЧЕНИЯ (v5.9.0-sandbox)
+   КХАМАЧ — ЯДРО БОЯ ОБУЧЕНИЯ (УБРАНЫ АЛЕРТЫ ПОБЕДЫ)
    ========================================================================== */
 
 let combatData = { dragonHP: 120, dragonMaxHP: 120, playerAP: 3, currentRound: 1, squad: [] };
@@ -29,7 +29,6 @@ function startCombatSession() {
 function usePlayerActionPoint() {
     combatData.playerAP--;
     if (combatData.playerAP <= 0) {
-        // Дракон кусает в ответ
         setTimeout(() => {
             let target = combatData.squad.find(h => h.hp > 0);
             if (target) target.hp = Math.max(0, target.hp - 16);
@@ -38,7 +37,6 @@ function usePlayerActionPoint() {
             if (typeof updateCombatInterfaceDOM === 'function') updateCombatInterfaceDOM();
             
             if (combatData.squad.every(h => h.hp <= 0)) {
-                alert("Отряд пал! Начнем бой сначала.");
                 startCombatSession();
             }
         }, 400);
@@ -48,7 +46,7 @@ function usePlayerActionPoint() {
 
 function activateHeroSuperpower(heroId) {
     let hero = combatData.squad.find(h => h.id === heroId);
-    if (!hero || hero.sp < 100) return;
+    if (!hero || hero.hp <= 0 || hero.sp < 100) return;
     hero.sp = 0;
     
     if (heroId === 'damage') combatData.dragonHP = Math.max(0, combatData.dragonHP - 135);
@@ -58,8 +56,16 @@ function activateHeroSuperpower(heroId) {
     
     if (combatData.dragonHP <= 0) {
         localStorage.setItem('khamach_combat_tutorial_done', 'true');
-        alert("ВЕЛИКАЯ ПОБЕДА! Дракон повержен!");
-        window.location.href = 'gate.html?t=' + Date.now();
+        
+        // БЕЗ АЛЕРТОВ: Закрываем боевой интерфейс и плавно перекидываем на шаги gate.html
+        const combatScr = document.getElementById('combat-screen');
+        if (combatScr) combatScr.style.display = 'none';
+        
+        if (typeof window.reloadOnboardingCoreState === 'function') {
+            window.reloadOnboardingCoreState();
+        } else {
+            window.location.href = 'gate.html?t=' + Date.now();
+        }
     }
 }
 
