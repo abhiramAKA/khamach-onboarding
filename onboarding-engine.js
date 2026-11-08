@@ -1,9 +1,8 @@
 /* ==========================================================================
-   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ (БЕСШОВНЫЕ ПЕРЕХОДЫ И СТРУКТУРА - v1.0.2)
+   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ И ПРОМЕЖУТОЧНЫХ ПОП-АПОВ (v1.0.3)
    ========================================================================== */
 
 window.reloadOnboardingCoreState = function() {
-    // Вспомогательный метод для бесшовного обновления текстов главного окна
     const gothicWin = document.getElementById('onboarding-gothic-window');
     if (gothicWin) gothicWin.style.display = 'flex';
     if (typeof window.checkAndRenderOnboardingMainButton === 'function') {
@@ -12,13 +11,32 @@ window.reloadOnboardingCoreState = function() {
 };
 
 window.executeOnboardingCitadelBuild = function() {
-    // РЕАКТИВНАЯ ПОСТРОЙКА: Списываем деньги и мгновенно открываем Ратушу без перезагрузок!
     localStorage.setItem('khamach_gold', '0'); 
     localStorage.setItem('khamach_build_tank', '2'); 
     localStorage.setItem('khamach_citadel_tutorial_done', 'true');
-    
     document.getElementById('squad-screen').style.display = 'none';
-    window.launchOnboardingStep('missions'); // Мгновенно открываем окно Ратуши 💰!
+    
+    // МЕШОЧЕК С ДЕНЬГАМИ: Выводим красивое готическое окно перед Ратушей
+    let goldPopup = document.createElement('div');
+    goldPopup.className = 'game-window combat-help-popup';
+    goldPopup.style.display = 'flex'; goldPopup.style.zIndex = '25000';
+    goldPopup.innerHTML = `
+        <div class="combat-help-content" style="max-width: 380px; padding: 20px; text-align: center;">
+            <div style="font-size: 64px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 10px #ffd700);">💰</div>
+            <h2>КАЗНА СТРОИТЕЛЬСТВА</h2>
+            <span class="subtitle">Экономика Цитадели</span>
+            <p style="font-size: 13px; color: #cdb38c; text-align: left; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 15px;">
+                Гарнизон успешно возведен! Лимит развития Танка повышен. Однако золото в казне Абхирамбурга иссякло. Чтобы продолжить обеспечение армии, откройте Ратушу и отправьте Защитника на городские контракты.
+            </p>
+            <button id="confirm-to-missions-btn" class="menu-btn" style="width: 100%; background: linear-gradient(to bottom, #1d3a1e, #0f2110); border-color: #316e34; padding: 10px; font-weight:bold;">ОТКРЫТЬ РАТУШУ</button>
+        </div>
+    `;
+    document.body.appendChild(goldPopup);
+    
+    document.getElementById('confirm-to-missions-btn').onclick = function() {
+        goldPopup.remove();
+        window.launchOnboardingStep('missions'); // И только теперь пускаем в доску объявлений!
+    };
 };
 
 window.launchOnboardingStep = function(modeType) {
@@ -85,22 +103,28 @@ window.triggerFinalOnboardingTransfer = function() {
     localStorage.setItem('khamach_missions_tutorial_done', 'true');
     localStorage.setItem('khamach_full_onboarding_complete', 'true');
 
+    const misScr = document.getElementById('missions-screen');
+    if (misScr) misScr.style.display = 'none';
+
+    // КРАСИВОЕ КАННОНИЧНОЕ ЗАВЕРШЕНИЕ: Выводим Вулкан и лорный фэнтези-текст
     let finishPopup = document.createElement('div');
     finishPopup.className = 'game-window combat-help-popup';
     finishPopup.style.display = 'flex'; finishPopup.style.zIndex = '25000';
     finishPopup.innerHTML = `
         <div class="combat-help-content" style="max-width: 390px; padding: 20px; text-align: center;">
-            <h2>📜 СЕРВЕР НАЙДЕН</h2>
-            <span class="subtitle">Переход в Мир Кхамача</span>
-            <p style="font-size: 13px; color: #cdb38c; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 20px;">
-                Обучение успешно завершено. Все ваши достижения (🪙 133, прокачанный Танк и Гарнизон) упакованы в память Цитадели. Нажмите кнопку ниже, чтобы совершить пространственный прыжок на основной сервер игры!
+            <h2>🌋 СИЛЫ БЕСТИАРИЯ</h2>
+            <span class="subtitle">Карта Великих Глав</span>
+            <p style="font-size: 13px; color: #cdb38c; text-align: left; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 20px;">
+                Ваш верный Защитник успешно выдвинулся на охрану южных рубежей Ратуши и временно покинул отряд. Пока он находится в пути, оставшееся воинство готово продолжить тактические рейды в Горниле. Нажмите на Вулкан ниже, чтобы открыть врата полноценного Бестиария Цитадели!
             </p>
-            <button id="onboarding-ultimate-redirect-btn" class="menu-btn" style="width:100%; background:linear-gradient(to bottom, #1d3a1e, #0f2110); padding:12px;">АКТИВИРОВАТЬ ПОРТАЛ 🌋</button>
+            <button id="onboarding-ultimate-redirect-btn" class="emoji-grid-btn" style="width: 100px; height: 100px; font-size: 50px; margin: 0 auto; border-radius: 4px;">🌋</button>
         </div>
     `;
     document.body.appendChild(finishPopup);
     
     document.getElementById('onboarding-ultimate-redirect-btn').onclick = function() {
+        finishPopup.remove();
+        // Перебрасываем на взрослую игру (Замени URL на адрес своей игры!)
         window.location.href = 'https://ТВОЙ_АККАУНТ.github.io/khamach-game/hub.html';
     };
 };
