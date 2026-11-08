@@ -1,31 +1,42 @@
 /* ==========================================================================
-   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (КАСКАДНЫЙ ДВИЖОК)
+   КХАМАЧ — МАТРИЧНЫЙ АЛГОРИТМ ПРОВЕРКИ СОВПАДЕНИЙ (КАСКАДНЫЙ СБОР + КОМБО)
    ========================================================================== */
 
 function checkMatchesAndExecute() {
     let matched = Array(8).fill().map(() => Array(8).fill(false));
     let found = false;
+    let detectedAdvancedCombo = false;
     
     // 1. Поиск триад по горизонтали
     for (let r = 0; r < 8; r++) {
-        for (let c = 0; c < 6; c++) {
-            if (match3BoardData[r][c] && 
-                match3BoardData[r][c] === match3BoardData[r][c+1] && 
-                match3BoardData[r][c] === match3BoardData[r][c+2]) {
-                matched[r][c] = matched[r][c+1] = matched[r][c+2] = true; 
-                found = true;
+        let matchLength = 1;
+        for (let c = 0; c < 8; c++) {
+            if (c < 7 && match3BoardData[r][c] === match3BoardData[r][c+1] && match3BoardData[r][c] !== null) {
+                matchLength++;
+            } else {
+                if (matchLength >= 3) {
+                    if (matchLength >= 4) detectedAdvancedCombo = true;
+                    for (let i = c - matchLength + 1; i <= c; i++) { matched[r][i] = true; }
+                    found = true;
+                }
+                matchLength = 1;
             }
         }
     }
     
     // 2. Поиск триад по вертикали
     for (let c = 0; c < 8; c++) {
-        for (let r = 0; r < 6; r++) {
-            if (match3BoardData[r][c] && 
-                match3BoardData[r][c] === match3BoardData[r+1][c] && 
-                match3BoardData[r][c] === match3BoardData[r+2][c]) {
-                matched[r][c] = matched[r+1][c] = matched[r+2][c] = true; 
-                found = true;
+        let matchLength = 1;
+        for (let r = 0; r < 8; r++) {
+            if (r < 7 && match3BoardData[r][c] === match3BoardData[r+1][c] && match3BoardData[r][c] !== null) {
+                matchLength++;
+            } else {
+                if (matchLength >= 3) {
+                    if (matchLength >= 4) detectedAdvancedCombo = true;
+                    for (let i = r - matchLength + 1; i <= r; i++) { matched[i][c] = true; }
+                    found = true;
+                }
+                matchLength = 1;
             }
         }
     }
@@ -34,7 +45,12 @@ function checkMatchesAndExecute() {
         isBoardLocked = true;
         let effects = { '🔥': 0, '🛡️': 0, '⚡': 0, '💚': 0 };
         
-        // Сбор наград и анимация взрыва
+        // Вызов поп-апа продвинутых комбинаций обучения
+        if (detectedAdvancedCombo) {
+            const comboScr = document.getElementById('combat-combo-tutorial-screen');
+            if (comboScr) comboScr.style.display = 'flex';
+        }
+        
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
                 if (matched[r][c] && match3BoardData[r][c]) {
@@ -48,7 +64,6 @@ function checkMatchesAndExecute() {
             }
         }
         
-        // Сила тяжести и падение новых камней
         setTimeout(() => {
             const RUNE_TYPES = ['🔥', '🛡️', '⚡', '💚'];
             
@@ -77,7 +92,6 @@ function checkMatchesAndExecute() {
             
             if (typeof chargeHeroSuperpowers === 'function') chargeHeroSuperpowers(effects);
             
-            // Синхронизируем DOM
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const cellEl = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
@@ -88,7 +102,6 @@ function checkMatchesAndExecute() {
                 }
             }
             
-            // РЕКУРСИВНЫЙ ЦИКЛ: Проверяем поле заново на наличие автокомбо от упавших рун
             setTimeout(() => {
                 let chainMatched = checkMatchesAndExecute();
                 if (!chainMatched) {
