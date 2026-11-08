@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ И ШЛЮЗ РЕДИРЕКТА (v5.9.0-sandbox)
+   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ И ШЛЮЗ РЕДИРЕКТА (ИСПРАВЛЕН - v5.9.1)
    ========================================================================== */
 
 window.launchOnboardingStep = function(modeType) {
@@ -19,11 +19,15 @@ window.launchOnboardingStep = function(modeType) {
     } 
     else if (modeType === 'camp') {
         if (typeof injectTownScreensDOM === 'function') injectTownScreensDOM();
-        if (typeof updateSquadHeroesSpecScreenDOM === 'function') updateSquadHeroesSpecScreenDOM();
-        document.getElementById('squad-heroes-spec-screen').style.display = 'flex';
+        
+        // ФИКС ОТКРЫТИЯ СПОРТЗАЛА: Сначала инжектим базовый каркас окна, затем рендерим список
+        const specScr = document.getElementById('squad-heroes-spec-screen');
+        if (specScr) {
+            if (typeof updateSquadHeroesSpecScreenDOM === 'function') updateSquadHeroesSpecScreenDOM();
+            specScr.style.display = 'flex';
+        }
     } 
     else if (modeType === 'citadel') {
-        // Симулируем меню лагеря
         localStorage.setItem('khamach_gold', '100');
         if (typeof injectSquadInterfaceDOM === 'function') injectSquadInterfaceDOM();
         document.getElementById('squad-screen').style.display = 'flex';
@@ -63,21 +67,18 @@ window.launchOnboardingStep = function(modeType) {
 };
 
 window.triggerFinalOnboardingTransfer = function() {
-    // НАЧИСЛЕНИЕ СТАРТОВОГО НАБОРА НАСТОЯЩЕЙ ИГРЫ
-    localStorage.setItem('khamach_gold', '133');                 // Честно заработанные монеты
-    localStorage.setItem('khamach_dragon_essence', '2');         // 1 стартовая + 1 за победу
-    localStorage.setItem('khamach_build_tank', '2');             // Построенный Гарнизон 2 уровня
-    localStorage.setItem('khamach_hero_lvl_tank', '2');          // Прокачанный Танк 2 уровня
-    localStorage.setItem('khamach_max_tier', '1');               // Открыт первый тир
+    localStorage.setItem('khamach_gold', '133');                 
+    localStorage.setItem('khamach_dragon_essence', '2');         
+    localStorage.setItem('khamach_build_tank', '2');             
+    localStorage.setItem('khamach_hero_lvl_tank', '2');          
+    localStorage.setItem('khamach_max_tier', '1');               
     
-    // Выставляем флаги завершения
     localStorage.setItem('khamach_combat_tutorial_done', 'true');
     localStorage.setItem('khamach_training_tutorial_done', 'true');
     localStorage.setItem('khamach_citadel_tutorial_done', 'true');
     localStorage.setItem('khamach_missions_tutorial_done', 'true');
     localStorage.setItem('khamach_full_onboarding_complete', 'true');
 
-    // ХУДОЖЕСТВЕННЫЙ ФИНАЛЬНЫЙ АККОРД
     let finishPopup = document.createElement('div');
     finishPopup.className = 'game-window combat-help-popup';
     finishPopup.style.display = 'flex'; finishPopup.style.zIndex = '25000';
@@ -94,7 +95,6 @@ window.triggerFinalOnboardingTransfer = function() {
     document.body.appendChild(finishPopup);
     
     document.getElementById('onboarding-ultimate-redirect-btn').onclick = function() {
-        // ЖЕСТКИЙ РЕДИРЕКТ НА СЛЕДУЮЩИЙ РЕПОЗИТОРИЙ (Замени URL на адрес своей игры!)
         window.location.href = 'https://ТВОЙ_АККАУНТ.github.io/khamach-game/hub.html';
     };
 };
