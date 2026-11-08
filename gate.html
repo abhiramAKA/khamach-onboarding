@@ -3,85 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
-    <title>КХАМАЧ — Чертоги Испытаний</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>КХАМАЧ — Обучение</title>
     <style>
-        .onboarding-loader-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(5, 4, 3, 0.65) !important; z-index: 30000; align-items: center; justify-content: center; flex-direction: column;
-            backdrop-filter: blur(2px);
-        }
-        .loader-hourglass { font-size: 64px; animation: spinHourglass 1.8s ease-in-out infinite; line-height: 1; margin-bottom: 15px; filter: drop-shadow(0 0 15px #e6c280); }
-        .loader-text { font-size: 13px; color: #cdb38c; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-        @keyframes spinHourglass { 0% { transform: rotate(0deg); } 45% { transform: rotate(180deg); } 50% { transform: rotate(180deg); } 95% { transform: rotate(360deg); } 100% { transform: rotate(360deg); } }
+        body, html { margin:0; padding:0; width:100%; height:100%; background:#050508; display:flex; justify-content:center; align-items:center; font-family:'Georgia', serif; user-select:none; -webkit-user-select:none; }
+        .gate-window { width:92vw; max-width:400px; background:radial-gradient(circle, #1a1512 0%, #0d0a08 100%); border:4px solid #1a1613; outline:2px solid #8a7350; outline-offset:-3px; padding:25px 20px; text-align:center; box-sizing:border-box; box-shadow:0 0 30px rgba(0,0,0,0.95); }
+        h1 { font-size:36px; color:#e6c280; letter-spacing:5px; margin:0 0 15px 0; text-shadow:0 2px 4px #000; font-weight:900; }
+        .play-btn { width:100%; padding:16px; font-size:18px; font-family:'Georgia', serif; font-weight:bold; letter-spacing:2px; color:#cdb38c; background:linear-gradient(to bottom, #2d2621 0%, #171311 100%); border:1px solid #544432; box-shadow:0 5px 10px rgba(0,0,0,0.6); cursor:pointer; transition:all 0.2s ease; border-radius:4px; text-shadow:2px 2px 2px #000; }
+        .play-btn:hover { color:#fff; border-color:#cbb281; box-shadow:0 0 15px rgba(203,178,129,0.5); letter-spacing:3px; }
+        .play-btn:active { transform:scale(0.98); }
+        .changelog { margin-top:18px; text-align:left; background:rgba(0,0,0,0.5); border:1px solid #3a3025; padding:10px; max-height:120px; overflow-y:auto; font-size:11px; color:#bfae96; line-height:1.45; border-radius:2px; }
+        .changelog h3 { margin:0 0 4px 0; color:#e6c280; font-size:12px; text-transform:uppercase; letter-spacing:1px; }
+        .ver { margin-top:15px; font-size:11px; color:#ffd700; letter-spacing:1px; font-weight:bold; text-shadow: 0 0 5px rgba(255,215,0,0.3); }
     </style>
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
-    
-    <div id="onboarding-loading-screen" class="onboarding-loader-overlay">
-        <div class="loader-hourglass">⏳</div>
-        <div class="loader-text">Магия Кхамача призывается...</div>
-    </div>
-
-    <div id="game-interface">
-        <div id="onboarding-gothic-window" class="game-window" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; box-sizing: border-box;">
-            <h1 id="onboarding-title" style="font-size: 28px; margin-bottom: 5px;">ПРИКЛЮЧЕНИЕ</h1>
-            <span id="onboarding-subtitle" class="subtitle" style="margin-bottom: 20px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Первый шаг в Горнило</span>
-            <p id="onboarding-description" style="font-size: 13px; line-height: 1.6; color: #bfae96; margin-bottom: 25px; padding: 0 10px;">
-                Древние подземелья Абхирамбурга пробудились. Соберите волю в кулак, управляйте камнями стихий и сокрушите огнедышащих тварей в тактических битвах!
-            </p>
-            <div id="onboarding-buttons-zone" class="menu-emoji-grid" style="display: flex; justify-content: center; align-items: center; gap: 16px; min-height: 140px; width: 100%; box-sizing: border-box; padding: 0 20px;"></div>
-        </div>
+    <div class="gate-window">
+        <h1>КХАМАЧ</h1>
+        <button class="play-btn" onclick="window.location.href='gate.html?v=v1.0.3-ONBOARDING&t=' + Date.now()">НАЧАТЬ С НУЛЯ</button>
         
-        <div id="dynamic-combat-screen"></div>
-        <div id="squad-screen" class="game-window" style="display: none;"></div>
-        <div id="squad-heroes-spec-screen" class="game-window" style="display: none; z-index: 100;"></div>
-        <div id="missions-screen" class="game-window" style="display: none; z-index: 100; flex-direction: column;">
-            <h2>Доска Поручений</h2>
-            <span class="subtitle">Городские Контракты</span>
-            <div id="missions-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; margin-bottom: 10px; width: 100%;"></div>
+        <div class="changelog">
+            <h3>📜 СЛЕДЫ ИСТОРИИ (СБОРКА v1.0.3):</h3>
+            • Интегрирован визуальный расчет transform для плавного скольжения рун и своп-бэка.<br>
+            • Повторный вылет поп-апа комбо заблокирован флагом после 1 показа.<br>
+            • Карточки Спортзала перестроены в один строгий вертикальный ряд сверху вниз.<br>
+            • Добавлено готическое окно Ратуши с мешочком монет 💰 при постройке Гарнизона.<br>
+            • Лорное завершение онбординга с красивым текстом и кнопкой Вулкана.
         </div>
-        <div id="dragon-select-screen" class="game-window" style="display: none; z-index: 100;">
-            <h2 id="adventure-screen-title">Выбор Рейда</h2>
-            <span id="adventure-screen-subtitle" class="subtitle">Финальный шаг</span>
-            <div id="dragon-levels-grid" style="display: flex; flex-direction: column; width: 100%; max-height: 50vh; overflow-y: auto; gap: 4px;"></div>
-            <button id="from-select-to-menu-btn" class="menu-btn back-btn" style="width: 100%; display: none;">Назад</button>
-        </div>
+        <div class="ver">ТЕКУЩАЯ СБОРКА ОБУЧЕНИЯ: v1.0.3-ONBOARDING</div>
     </div>
-
-    <script>
-        window.GAME_VERSION = "ONBOARD_v1";
-
-        function loadGameModulesAndExecute(modeType) {
-            const spinner = document.getElementById('onboarding-loading-screen');
-            if (spinner) spinner.style.display = 'flex';
-
-            const enforceBuster = Date.now() + '_' + Math.floor(Math.random() * 999999);
-            const scripts = [
-                'background.js', 'audio-engine.js', 'match3-fx.js', 'match3-input.js', 
-                'match3.js', 'match3-logic.js', 'town-dom.js', 'combat-popups.js', 
-                'combat-dom.js', 'missions-board.js', 'squad-logic.js', 'combat.js'
-            ];
-
-            function injectScriptSequentially(index) {
-                if (index >= scripts.length) {
-                    if (spinner) spinner.style.display = 'none';
-                    if (typeof window.launchOnboardingStep === 'function') {
-                        window.launchOnboardingStep(modeType);
-                    }
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = scripts[index] + '?v=' + window.GAME_VERSION + '&t=' + enforceBuster;
-                script.async = false; 
-                script.onload = function() { injectScriptSequentially(index + 1); };
-                document.head.appendChild(script);
-            }
-            injectScriptSequentially(0);
-        }
-    </script>
-    <script src="onboarding-data.js?v=1"></script>
-    <script src="onboarding-engine.js?v=1"></script>
 </body>
 </html>
