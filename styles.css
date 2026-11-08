@@ -1,0 +1,15 @@
+/* ==========================================================================
+   КХАМАЧ — ГЛАВНЫЙ СТИЛИСТИЧЕСКИЙ ДИСПЕТЧЕР ОБУЧЕНИЯ (v5.9.0-sandbox)
+   ========================================================================== */
+
+@import url('css/base.css?v=1');
+@import url('css/layouts.css?v=1');
+@import url('css/combat.css?v=1');
+@import url('css/board.css?v=1');
+
+/* ПРОЗРАЧНОСТЬ ЛОАДЕРА ДЛЯ ПРОСВЕТА ИСКР ПОД ЧАСАМИ */
+.onboarding-loader-overlay, .combat-help-popup {
+    background: rgba(10, 8, 6, 0.75) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
