@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ВЕРТИКАЛЬНЫЙ СПОРТЗАЛ И ГОТИЧЕСКАЯ ЦИТАДЕЛЬ (v1.0.3)
+   КХАМАЧ — ВЕРТИКАЛЬНЫЙ СПОРТЗАЛ И ГОТИЧЕСКАЯ ЦИТАДЕЛЬ (ИСПРАВЛЕН - v1.0.5)
    ========================================================================== */
 
 const ONBOARDING_HERO_LORE = {
@@ -13,7 +13,6 @@ function updateSquadHeroesSpecScreenDOM() {
     const container = document.getElementById('heroes-upgrade-list-container');
     if (!container) return; container.innerHTML = '';
     
-    // UX-ФИКС: Перестраиваем на 1 строгую вертикальную колонку (один за другим)
     container.style.display = "flex"; 
     container.style.flexDirection = "column"; 
     container.style.gap = "6px";
@@ -25,10 +24,11 @@ function updateSquadHeroesSpecScreenDOM() {
         const lore = ONBOARDING_HERO_LORE[h.id];
         let actionBtnHTML = '';
         
+        // КНОПКИ СПОРТЗАЛА: Полное соответствие оригинальному взрослому base.css
         if (h.id === 'tank') {
-            actionBtnHTML = `<button class="menu-btn" style="padding:10px; font-size:12px; background:linear-gradient(to bottom, #1d3a1e, #0f2110); border-color:#316e34; width:130px; height:34px; font-weight:bold; line-height:1;" onclick="executeOnboardingCampUpgrade()">Тренировать</button>`;
+            actionBtnHTML = `<button class="menu-btn" style="padding:12px; font-size:13px; width:130px; height:44px;" onclick="executeOnboardingCampUpgrade()">Тренировать</button>`;
         } else {
-            actionBtnHTML = `<button class="menu-btn disabled" style="padding:10px; font-size:11px; background:#191412; border-color:#2e2520; color:#54443f; width:130px; height:34px; cursor:not-allowed;" disabled>Заблокирован</button>`;
+            actionBtnHTML = `<button class="menu-btn disabled" style="padding:12px; font-size:13px; width:130px; height:44px;" disabled>Заблокирован</button>`;
         }
         
         let cardInner = `
@@ -58,7 +58,7 @@ function injectSquadInterfaceDOM() {
     const screen = document.getElementById('squad-screen'); 
     if(!screen) return;
     
-    // КАНОНИЧНЫЙ ДИЗАЙН: Кнопки получили оригинальный готический стиль взрослой игры
+    // КНОПКИ ЦИТАДЕЛИ: Каноничный дизайн из base.css взрослой игры
     screen.innerHTML = `
         <h2>Цитадель</h2>
         <span class="subtitle">Инфраструктура строений</span>
