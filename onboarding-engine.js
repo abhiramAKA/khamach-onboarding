@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ (ФИКС ЦЕНТРИРОВАНИЯ ОКНОМ - v1.0.4)
+   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ (ГОТИЧЕСКИЕ КВАДРАТНЫЕ КНОПКИ - v1.0.5)
    ========================================================================== */
 
 window.reloadOnboardingCoreState = function() {
@@ -16,20 +16,22 @@ window.executeOnboardingCitadelBuild = function() {
     localStorage.setItem('khamach_citadel_tutorial_done', 'true');
     document.getElementById('squad-screen').style.display = 'none';
     
-    // МЕШОЧЕК С ДЕНЬГАМИ: Окно переведено на чистый класс .combat-help-popup без конфликтов
+    // МЕШОЧЕК С ДЕНЬГАМИ: Окно зеркально повторяет дизайн стартового Вулкана
     let goldPopup = document.createElement('div');
     goldPopup.className = 'combat-help-popup'; 
     goldPopup.style.zIndex = '25000';
     
     goldPopup.innerHTML = `
-        <div class="combat-help-content">
-            <div style="font-size: 64px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 10px #ffd700);">💰</div>
+        <div class="combat-help-content" style="max-width: 380px; text-align: center;">
             <h2>КАЗНА СТРОИТЕЛЬСТВА</h2>
             <span class="subtitle">Экономика Цитадели</span>
-            <p style="font-size: 13px; color: #cdb38c; text-align: left; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 15px;">
-                Гарнизон успешно возведен! Лимит развития Танка повышен. Однако золото в казне Абхирамбурга иссякло. Чтобы продолжить обеспечение армии, откройте Ратушу и отправьте Защитника на городские контракты.
+            <p style="font-size: 13px; color: #cdb38c; text-align: left; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 20px;">
+                Гарнизон успешно возведен! Лимит развития Защитника повышен. Однако золото в казне Абхирамбурга иссякло. Чтобы продолжить обеспечение армии, откройте Ратушу и отправьте Защитника на городские контракты.
             </p>
-            <button id="confirm-to-missions-btn" class="menu-btn" style="width: 100%; background: linear-gradient(to bottom, #1d3a1e, #0f2110); border-color: #316e34; padding: 10px; font-weight:bold;">ОТКРЫТЬ РАТУШУ</button>
+            <!-- КВАДРАТНАЯ КНОПКА С МЕШОЧКОМ ДЕНЕГ С ЭФФЕКТОМ СИЯНИЯ -->
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <button id="confirm-to-missions-btn" class="emoji-grid-btn" style="width: 100px; height: 100px; font-size: 54px; margin: 0 auto;">💰</button>
+            </div>
         </div>
     `;
     document.body.appendChild(goldPopup);
@@ -82,7 +84,7 @@ window.launchOnboardingStep = function(modeType) {
                         <span style="color: #ffd700;">🪙 133</span>
                     </div>
                     <div style="font-size: 11px; color: #bfae96; line-height: 1.3; text-align: left;">${mission.text}</div>
-                    <button class="menu-btn" style="padding:4px; font-size:13px; background:#1d3a1e; height:28px; margin-top: 4px; font-weight:bold;" onclick="window.triggerFinalOnboardingTransfer()">Отправить 🛡️</button>
+                    <button class="menu-btn" style="padding:10px; font-size:13px; background:#1d3a1e; height:38px; margin-top: 4px; font-weight:bold;" onclick="window.triggerFinalOnboardingTransfer()">Отправить 🛡️</button>
                 `;
                 container.appendChild(card);
             });
@@ -107,7 +109,7 @@ window.triggerFinalOnboardingTransfer = function() {
     const misScr = document.getElementById('missions-screen');
     if (misScr) misScr.style.display = 'none';
 
-    // ФИНАЛЬНЫЙ ВУЛКАН: Переведен строго на класс центрирования .combat-help-popup без сдвигов
+    // ФИНАЛЬНЫЙ ВУЛКАН: Окно с квадратной сияющей кнопкой Вулкана
     let finishPopup = document.createElement('div');
     finishPopup.className = 'combat-help-popup'; 
     finishPopup.style.zIndex = '25000';
@@ -119,14 +121,16 @@ window.triggerFinalOnboardingTransfer = function() {
             <p style="font-size: 13px; color: #cdb38c; text-align: left; line-height: 1.5; background:rgba(0,0,0,0.4); padding:12px; border:1px solid #544432; margin-bottom: 20px;">
                 Ваш верный Защитник успешно выдвинулся на охрану южных рубежей Ратуши и временно покинул отряд. Пока он находится в пути, оставшееся воинство готово продолжить тактические рейды в Горниле. Нажмите на Вулкан ниже, чтобы открыть врата полноценного Бестиария Цитадели!
             </p>
-            <button id="onboarding-ultimate-redirect-btn" class="emoji-grid-btn" style="width: 100px; height: 100px; font-size: 50px; margin: 0 auto; border-radius: 4px;">🌋</button>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <button id="onboarding-ultimate-redirect-btn" class="emoji-grid-btn" style="width: 100px; height: 100px; font-size: 50px; margin: 0 auto;">🌋</button>
+            </div>
         </div>
     `;
     document.body.appendChild(finishPopup);
     
     document.getElementById('onboarding-ultimate-redirect-btn').onclick = function() {
         finishPopup.remove();
-        // ВНИМАНИЕ: Пропиши сюда ссылку на свой второй репозиторий взрослой игры
+        // ВНИМАНИЕ: Здесь будет переход к полноценному Хабу взрослой игры
         window.location.href = 'https://ТВОЙ_АККАУНТ.github.io/khamach-game/hub.html';
     };
 };
