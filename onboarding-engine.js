@@ -1,5 +1,5 @@
 /* ==========================================================================
-   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ И ПРОМЕЖУТОЧНЫХ ПОП-АПОВ (v1.0.3)
+   КХАМАЧ — ДВИЖОК ШАГОВ ОБУЧЕНИЯ (ФИКС ЦЕНТРИРОВАНИЯ ОКНОМ - v1.0.4)
    ========================================================================== */
 
 window.reloadOnboardingCoreState = function() {
@@ -16,12 +16,13 @@ window.executeOnboardingCitadelBuild = function() {
     localStorage.setItem('khamach_citadel_tutorial_done', 'true');
     document.getElementById('squad-screen').style.display = 'none';
     
-    // МЕШОЧЕК С ДЕНЬГАМИ: Выводим красивое готическое окно перед Ратушей
+    // МЕШОЧЕК С ДЕНЬГАМИ: Окно переведено на чистый класс .combat-help-popup без конфликтов
     let goldPopup = document.createElement('div');
-    goldPopup.className = 'game-window combat-help-popup';
-    goldPopup.style.display = 'flex'; goldPopup.style.zIndex = '25000';
+    goldPopup.className = 'combat-help-popup'; 
+    goldPopup.style.zIndex = '25000';
+    
     goldPopup.innerHTML = `
-        <div class="combat-help-content" style="max-width: 380px; padding: 20px; text-align: center;">
+        <div class="combat-help-content">
             <div style="font-size: 64px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 10px #ffd700);">💰</div>
             <h2>КАЗНА СТРОИТЕЛЬСТВА</h2>
             <span class="subtitle">Экономика Цитадели</span>
@@ -35,7 +36,7 @@ window.executeOnboardingCitadelBuild = function() {
     
     document.getElementById('confirm-to-missions-btn').onclick = function() {
         goldPopup.remove();
-        window.launchOnboardingStep('missions'); // И только теперь пускаем в доску объявлений!
+        window.launchOnboardingStep('missions');
     };
 };
 
@@ -106,10 +107,11 @@ window.triggerFinalOnboardingTransfer = function() {
     const misScr = document.getElementById('missions-screen');
     if (misScr) misScr.style.display = 'none';
 
-    // КРАСИВОЕ КАННОНИЧНОЕ ЗАВЕРШЕНИЕ: Выводим Вулкан и лорный фэнтези-текст
+    // ФИНАЛЬНЫЙ ВУЛКАН: Переведен строго на класс центрирования .combat-help-popup без сдвигов
     let finishPopup = document.createElement('div');
-    finishPopup.className = 'game-window combat-help-popup';
-    finishPopup.style.display = 'flex'; finishPopup.style.zIndex = '25000';
+    finishPopup.className = 'combat-help-popup'; 
+    finishPopup.style.zIndex = '25000';
+    
     finishPopup.innerHTML = `
         <div class="combat-help-content" style="max-width: 390px; padding: 20px; text-align: center;">
             <h2>🌋 СИЛЫ БЕСТИАРИЯ</h2>
@@ -124,7 +126,7 @@ window.triggerFinalOnboardingTransfer = function() {
     
     document.getElementById('onboarding-ultimate-redirect-btn').onclick = function() {
         finishPopup.remove();
-        // Перебрасываем на взрослую игру (Замени URL на адрес своей игры!)
+        // ВНИМАНИЕ: Пропиши сюда ссылку на свой второй репозиторий взрослой игры
         window.location.href = 'https://ТВОЙ_АККАУНТ.github.io/khamach-game/hub.html';
     };
 };
