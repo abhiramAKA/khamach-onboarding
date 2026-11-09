@@ -131,6 +131,6 @@ window.triggerFinalOnboardingTransfer = function() {
     document.getElementById('onboarding-ultimate-redirect-btn').onclick = function() {
         finishPopup.remove();
         // ВНИМАНИЕ: Здесь будет переход к полноценному Хабу взрослой игры
-        window.location.href = 'https://ТВОЙ_АККАУНТ.github.io/khamach-game/hub.html';
+        window.location.href = 'https://abhiramaka.github.io/abhiramburg/hub.html';
     };
 };
